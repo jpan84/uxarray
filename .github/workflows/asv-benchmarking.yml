@@ -23,10 +23,6 @@ jobs:
           repository: UXARRAY/uxarray
           fetch-depth: 0
 
-      - name: Fetch all tags and branches for uxarray
-        run: |
-          git fetch --all --tags
-
       - name: Checkout uxarray-asv
         uses: actions/checkout@v4
         with:
@@ -77,7 +73,6 @@ jobs:
           fi
 
       - name: Run benchmarks
-        shell: bash -l {0}
         id: benchmark
         run: |
           cd benchmarks
