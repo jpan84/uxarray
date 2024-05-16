@@ -78,7 +78,6 @@ jobs:
       - name: DEBUG
         run: |
           which git
-          git rev-list --first-parent v2024.02.0..main --
           find ./ -name '.git' -print
           
           rm -r uxarray-asv/.git/
