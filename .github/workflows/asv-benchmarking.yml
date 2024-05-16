@@ -77,7 +77,7 @@ jobs:
 
       - name: DEBUG
         run: |
-          find ./ -name '.git' -print
+          which git
           git rev-list --first-parent v2024.02.0..main --
 
       - name: Run benchmarks

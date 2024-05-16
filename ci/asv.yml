@@ -3,6 +3,7 @@ channels:
   - conda-forge
 dependencies:
   - python=3.11
+  - asv<0.6.2
   - cartopy
   - dask
   - datashader
@@ -28,5 +29,4 @@ dependencies:
   - pip:
     - antimeridian
     - pyfma
-    - asv<0.6.2
     - -e ../
