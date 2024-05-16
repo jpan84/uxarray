@@ -61,8 +61,7 @@ jobs:
         id: cache
 
       - name: Update environment
-        run:
-          conda env update -n asv -f ./ci/asv.yml
+        run: conda env update -n asv -f ./ci/asv.yml
         if: steps.cache.outputs.cache-hit != 'true'
 
       - name: Conda list
@@ -79,6 +78,7 @@ jobs:
       - name: DEBUG
         run: |
           find ./ -name '.git' -print
+          git rev-list --first-parent v2024.02.0..main --
 
       - name: Run benchmarks
         id: benchmark
