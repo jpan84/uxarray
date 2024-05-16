@@ -80,6 +80,7 @@ jobs:
           which git
           rm -r uxarray-asv/.git/
           find ./ -name '.git' -print
+          git tag -l
           git rev-list --first-parent v2024.02.0..main --
 
       - name: Run benchmarks
