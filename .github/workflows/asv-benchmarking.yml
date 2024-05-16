@@ -77,7 +77,6 @@ jobs:
           fi
 
       - name: Run benchmarks
-        shell: bash -l {0}
         id: benchmark
         run: |
           cd benchmarks
