@@ -76,6 +76,10 @@ jobs:
             cp -r uxarray-asv/results benchmarks/
           fi
 
+      - name: DEBUG
+        run: |
+          find ./ -name '.git' -print
+
       - name: Run benchmarks
         id: benchmark
         run: |
