@@ -20,6 +20,7 @@ jobs:
       - name: Checkout uxarray
         uses: actions/checkout@v4
         with:
+          ref: main
           repository: UXARRAY/uxarray
           fetch-depth: 0
 
