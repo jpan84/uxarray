@@ -15,7 +15,7 @@
 
 
 
-UXarray aims to address the geoscience community's need for tools that enable
+UXarray aims to addressthe geoscience community's need for tools that enable
 standard data analysis techniques to operate directly on unstructured grid
 data. UXarray provides Xarray-styled functionality to better read in and use
 unstructured grid datasets that follow standard conventions, including UGRID,
