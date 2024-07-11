@@ -31,6 +31,7 @@ from uxarray.grid.coordinates import (
     _set_desired_longitude_range,
     _populate_node_latlon,
     _populate_node_xyz,
+    _project_coordinates,
 )
 from uxarray.grid.connectivity import (
     _populate_edge_node_connectivity,
@@ -67,6 +68,8 @@ from uxarray.grid.validation import (
 
 
 from xarray.core.utils import UncachedAccessor
+
+import cartopy.crs as ccrs
 
 from warnings import warn
 
@@ -116,6 +119,7 @@ class Grid:
         grid_ds: xr.Dataset,
         source_grid_spec: Optional[str] = None,
         source_dims_dict: Optional[dict] = {},
+        projection: Optional[ccrs.Projection] = None,
     ):
         # check if inputted dataset is a minimum representable 2D UGRID unstructured grid
         if not _validate_minimum_ugrid(grid_ds):
@@ -158,8 +162,11 @@ class Grid:
         self._ball_tree = None
         self._kd_tree = None
 
-        # set desired longitude range to [-180, 180]
-        _set_desired_longitude_range(self._ds)
+        # store projection
+        self._projection = projection
+
+        # # set desired longitude range to [-180, 180] TODO
+        # _set_desired_longitude_range(self._ds)
 
     # declare plotting accessor
     plot = UncachedAccessor(GridPlotAccessor)
@@ -222,6 +229,7 @@ class Grid:
         fill_value: Optional = None,
         start_index: Optional[int] = 0,
         dims_dict: Optional[dict] = None,
+        projection: Optional[ccrs.Projection] = None,
         **kwargs,
     ):
         """Constructs a ``Grid`` object from user-defined topology variables
@@ -266,7 +274,12 @@ class Grid:
             **kwargs,
         )
         grid_spec = "User Defined Topology"
-        return cls(grid_ds, grid_spec, dims_dict)
+
+        if projection is None:
+            # default projection
+            projection = ccrs.PlateCarree()
+
+        return cls(grid_ds, grid_spec, dims_dict, projection)
 
     @classmethod
     def from_face_vertices(
@@ -302,6 +315,20 @@ class Grid:
             )
 
         return cls(grid_ds, source_grid_spec="Face Vertices")
+
+    def set_projection(self, projection):
+        if "node_lon" in self._ds:
+            node_lon, node_lat = _project_coordinates(
+                self._ds["node_lon"].data,
+                self._ds["node_lat"].data,
+                self._projection,
+                projection,
+            )
+            self._ds["node_lon"].data = node_lon
+            self._ds["node_lat"].data = node_lat
+
+        # set new projection
+        self._projection = projection
 
     def validate(self):
         """Validate a grid object check for common errors, such as:

@@ -1,6 +1,8 @@
 import xarray as xr
 import numpy as np
 
+import cartopy.crs as ccrs
+
 import warnings
 
 from uxarray.constants import ERROR_TOLERANCE
@@ -9,6 +11,22 @@ from uxarray.conventions import ugrid
 from typing import Union
 
 from numba import njit
+
+
+def _project_coordinates(
+    lon,
+    lat,
+    source_projection: ccrs.Projection,
+    destination_projection: ccrs.Projection,
+):
+    if source_projection == destination_projection:
+        # no need to project ?
+        return lon, lat
+
+    lon_proj, lat_proj, _ = destination_projection.transform_points(
+        source_projection, lon, lat
+    )
+    return lon_proj, lat_proj
 
 
 @njit(cache=True)
