@@ -1912,3 +1912,8 @@ class Grid:
             raise ValueError(
                 "Indexing must be along a grid dimension: ('n_node', 'n_edge', 'n_face')"
             )
+
+    def split(self):
+        # TODO: Split grid along antimeridian
+        # Perform a constant longitude intersection
+        pass
