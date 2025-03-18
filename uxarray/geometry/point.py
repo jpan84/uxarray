@@ -3,66 +3,62 @@ from __future__ import annotations
 import numpy as np
 
 from numpy.typing import NDArray
-from uxarray import Grid
 
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .gca import GreatCircleArc
+    pass
+
+from typing import Optional
 
 
 class Point:
     def __init__(
         self,
-        x: np.float64 | float,
-        y: np.float64 | float,
-        z: np.float64 | float,
+        x: float = 0.0,
+        y: float = 0.0,
+        z: float = 0.0,
         normalized: bool = False,
+        parent_data: NDArray[np.float64] | None = None,
+        idx: Optional[int] = None,
     ):
-        self.data = np.array([x, y, z], dtype=np.float64)
+        if parent_data is not None:
+            # External view mode
+            if idx is None:
+                raise ValueError("Must provide idx when parent_data is provided")
+            self._parent_data = parent_data
+            self._idx = idx
+            self._owns_data = False
+        else:
+            # Create our own data array to view into
+            self._parent_data = np.array([[x, y, z]], dtype=np.float64)  # Shape (1,3)
+            self._idx = 0
+            self._owns_data = True
+
         self._normalized = normalized
 
-    def __eq__(self, other):
-        pass
-
-    def __ne__(self, other):
-        pass
-
-    def __add__(self, other):
-        pass
-
-    def __sub__(self, other):
-        pass
-
-    def __mul__(self, other):
-        pass
-
-    def __truediv__(self, other):
-        pass
-
-    # ==================================================================================================================
+    @property
+    def x(self) -> float:
+        return self._parent_data[self._idx, 0]
 
     @property
-    def x(self):
-        return self.data[0]
+    def y(self) -> float:
+        return self._parent_data[self._idx, 1]
 
     @property
-    def y(self):
-        return self.data[1]
+    def z(self) -> float:
+        return self._parent_data[self._idx, 2]
 
     @property
-    def z(self):
-        return self.data[2]
+    def normalized(self) -> bool:
+        return self._normalized
 
-    # ==================================================================================================================
+    @property
+    def data(self) -> NDArray[np.float64]:
+        return self._parent_data[self._idx, :]
 
-    def normalize(self):
+    def normalize(self) -> None:
         pass
-
-    def within(self, gca: GreatCircleArc):
-        from .point_within_gca import point_within_gca
-
-        return point_within_gca(self, gca)
 
 
 class PointArray:
@@ -72,48 +68,24 @@ class PointArray:
         y: NDArray[np.float64],
         z: NDArray[np.float64],
         normalized: bool = False,
-        grid_mapping: str = None,
     ):
-        # TODO: Add checks for the dimension size
-
-        self.data = np.stack([x, y, z], axis=1, dtype=np.float64)
+        self.data = np.stack([x, y, z], axis=1).astype(np.float64)
         self._normalized = normalized
-        self._grid_mapping = grid_mapping
 
-    def __getitem__(self, index):
-        x, y, z = self.data[index]
-        return Point(x, y, z, normalized=self._normalized)
-
-    @classmethod
-    def from_grid(cls, grid: Grid, element: str = "corner nodes"):
-        if element == "corner nodes":
-            return cls(grid.node_x.values, grid.node_y.values, grid.node_z.values)
-        elif element == "face centers":
-            return cls(grid.face_x.values, grid.face_y.values, grid.face_z.values)
-        elif element == "edge centers":
-            return cls(grid.edge_x.values, grid.edge_y.values, grid.edge_z.values)
-        else:
-            raise ValueError("TODO")
+    def __getitem__(self, idx: int) -> Point:
+        return Point(normalized=self._normalized, parent_data=self.data, idx=idx)
 
     @property
-    def normalized(self):
-        return self._normalized
-
-    @property
-    def grid_mapping(self):
-        return self._grid_mapping
-
-    @property
-    def x(self):
+    def x(self) -> NDArray[np.float64]:
         return self.data[:, 0]
 
     @property
-    def y(self):
+    def y(self) -> NDArray[np.float64]:
         return self.data[:, 1]
 
     @property
-    def z(self):
+    def z(self) -> NDArray[np.float64]:
         return self.data[:, 2]
 
-    def normalize(self):
+    def normalize(self) -> None:
         pass

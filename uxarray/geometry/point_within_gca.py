@@ -6,22 +6,20 @@ from uxarray.constants import MACHINE_EPSILON
 
 from .point import Point, PointArray
 
-from .gca import GreatCircleArc, GreatCircleArcArray
+from .arc import Arc, ArcArray
 
 
-def point_within_gca(
-    point: Point | PointArray, gca: GreatCircleArc | GreatCircleArcArray
-):
-    if isinstance(point, Point) and isinstance(gca, GreatCircleArc):
+def point_within_gca(point: Point | PointArray, gca: Arc | ArcArray):
+    if isinstance(point, Point) and isinstance(gca, Arc):
         return _point_within_gca(point.data, gca.start_point.data, gca.end_point.data)
 
-    elif isinstance(point, Point) and isinstance(gca, GreatCircleArcArray):
+    elif isinstance(point, Point) and isinstance(gca, ArcArray):
         raise NotImplementedError
 
-    elif isinstance(point, PointArray) and isinstance(gca, GreatCircleArc):
+    elif isinstance(point, PointArray) and isinstance(gca, Arc):
         raise NotImplementedError
 
-    elif isinstance(point, PointArray) and isinstance(gca, GreatCircleArcArray):
+    elif isinstance(point, PointArray) and isinstance(gca, ArcArray):
         raise NotImplementedError
 
     else:
