@@ -455,3 +455,24 @@ def _build_face_face_connectivity(grid):
     ]
 
     return face_face_connectivity
+
+
+@njit(cache=True)
+def _pad_closed_face_nodes(
+    face_node_connectivity, n_face, n_max_face_nodes, n_nodes_per_face
+):
+    """Pads a closed array of face nodes by inserting the first element at any
+    point a fill value is encountered.
+
+    Ensures each resulting polygon has the same number of vertices.
+    """
+
+    closed = np.ones((n_face, n_max_face_nodes + 1), dtype=INT_DTYPE)
+
+    # set final value to the original
+    closed[:, :-1] = face_node_connectivity.copy()
+
+    for i, final_node_idx in enumerate(n_nodes_per_face):
+        closed[i, final_node_idx:] = closed[i, 0]
+
+    return closed

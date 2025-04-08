@@ -65,11 +65,18 @@ from uxarray.grid.connectivity import (
     _populate_face_face_connectivity,
 )
 
-from uxarray.grid.geometry import (
-    _populate_antimeridian_face_indices,
+from uxarray.plot.polygons import (
     _grid_to_polygon_geodataframe,
     _grid_to_matplotlib_polycollection,
-    _grid_to_matplotlib_linecollection,
+)
+
+from uxarray.plot.edges import _grid_to_matplotlib_linecollection
+
+from uxarray.plot.antimeridian import (
+    _populate_antimeridian_face_indices,
+)
+
+from uxarray.grid.geometry import (
     _populate_bounds,
     _construct_boundary_edge_indices,
     compute_temp_latlon_array,
