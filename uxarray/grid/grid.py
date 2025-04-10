@@ -1597,6 +1597,14 @@ class Grid:
             self._ds["max_face_radius"] = _populate_max_face_radius(self)
         return self._ds["max_face_radius"]
 
+    @property
+    def int_dtype(self):
+        return self.face_node_connectivity.dtype
+
+    @property
+    def int_fill_value(self):
+        return np.iinfo(self.int_dtype).min
+
     def chunk(self, n_node="auto", n_edge="auto", n_face="auto"):
         """Converts all arrays to dask arrays with given chunks across grid
         dimensions in-place.
